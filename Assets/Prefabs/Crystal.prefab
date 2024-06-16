@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2507597815304561130}
   - component: {fileID: 3319269317543457637}
   - component: {fileID: 8318204279547532829}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Crystal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -120,7 +120,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a37824671e47f64dab9461937811e9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  growSpeed: 5
 --- !u!58 &8318204279547532829
 CircleCollider2D:
   m_ObjectHideFlags: 0
