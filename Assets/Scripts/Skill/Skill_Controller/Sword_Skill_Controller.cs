@@ -206,7 +206,7 @@ public class Sword_Skill_Controller : MonoBehaviour
 
     private void SwordSkillDamage(Enemy enemy)
     {
-        enemy.Damage();
+        enemy.DamageEffect();
         enemy.StartCoroutine("FreezeTimerFor", freezeTimeDuration);
     }
 
@@ -243,7 +243,7 @@ public class Sword_Skill_Controller : MonoBehaviour
             return;
         }
 
-        collision.GetComponent<Enemy>().Damage();
+        collision.GetComponent<Enemy>().DamageEffect();
 
 
         canRotate = false;
