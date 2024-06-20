@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class CharacterStats : MonoBehaviour
 {
+    private EntityFX fx;
+
     [Header("Major stats")]
     public Stat strengh; // increase damage and % crit power
     public Stat vitality; //increase health
@@ -31,6 +33,8 @@ public class CharacterStats : MonoBehaviour
     public bool isChilled; //reduce armor
     public bool isShocked; //reduce accuracy
 
+    [SerializeField] private float ailmentsDuration = 4f;
+
     private float ignitedTimer;
     private float chilledTimer;
     private float shockedTimer;
@@ -39,12 +43,15 @@ public class CharacterStats : MonoBehaviour
     private float igniteDamageTimer;
     private int igniteDamage;
 
-    [SerializeField] private int currentHealth;
+    public int currentHealth;
+
+    public System.Action onHealthChanged;
 
     protected virtual void Start()
     {
-        currentHealth = maxHealth.getValue();
+        currentHealth = GetMaxHealthValue();
         critPower.SetDefaultValue(150);
+        fx = GetComponent<EntityFX>();
     }
 
     protected virtual void Update()
@@ -71,7 +78,7 @@ public class CharacterStats : MonoBehaviour
 
         if(igniteDamageTimer < 0 && isIgnited)
         {
-            currentHealth -= igniteDamage;
+            DecreaseHealthBy(igniteDamage);
             if (currentHealth < 0)
                 Die();
             igniteDamageTimer = igniteCooldown;
@@ -114,7 +121,7 @@ public class CharacterStats : MonoBehaviour
 
         while(!canApplyIgnite && !canApplyChill && !canApplyShock)
         {
-            if(UnityEngine.Random.value < 1f && _fireDamage > 0)
+            if(UnityEngine.Random.value < .3f && _fireDamage > 0)
             {
                 canApplyIgnite = true;
                 _targetStats.ApplyAilments(canApplyIgnite, canApplyChill, canApplyShock);
@@ -157,19 +164,23 @@ public class CharacterStats : MonoBehaviour
         if (_ignite)
         {
             isIgnited = _ignite;
-            ignitedTimer = 2;
+            ignitedTimer = ailmentsDuration;
+            fx.IgniteFxFor(ailmentsDuration);
         }
 
         if (_chill)
         {
             isChilled = _chill;
-            chilledTimer = 2;
+            chilledTimer = ailmentsDuration;
+
+            fx.ChillFxFor(ailmentsDuration);
         }
 
         if (_shock)
         {
             isShocked = _shock;
-            shockedTimer = 2;
+            shockedTimer = ailmentsDuration;
+            fx.ShockFxFor(ailmentsDuration);
         }
     }
 
@@ -181,10 +192,20 @@ public class CharacterStats : MonoBehaviour
 
     public virtual void TakeDamage(int _damage)
     {
-        currentHealth -= _damage;
+        DecreaseHealthBy(_damage);
 
         if (currentHealth < 0)
             Die();
+    }
+
+    protected virtual void DecreaseHealthBy(int _damage)
+    {
+        currentHealth -= _damage;
+
+        if(onHealthChanged != null)
+        {
+            onHealthChanged();
+        }
     }
 
     protected virtual void Die()
@@ -231,5 +252,10 @@ public class CharacterStats : MonoBehaviour
         float totalCritPower = (critPower.getValue() + strengh.getValue()) * 0.1f;
         float critDamage = _damage + totalCritPower;
         return Mathf.RoundToInt(critDamage);
+    }
+
+    public int GetMaxHealthValue()
+    {
+        return maxHealth.getValue() + vitality.getValue() * 5;
     }
 }
