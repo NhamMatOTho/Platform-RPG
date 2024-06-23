@@ -8,7 +8,7 @@ public class CharacterStats : MonoBehaviour
     private EntityFX fx;
 
     [Header("Major stats")]
-    public Stat strengh; // increase damage and % crit power
+    public Stat strength; // increase damage and % crit power
     public Stat vitality; //increase health
     public Stat intelligence; // increase magic damage and magic resistance
     public Stat agility; // increase evasion and % crit chance
@@ -92,7 +92,7 @@ public class CharacterStats : MonoBehaviour
         if (TargetCanAvoidAttack(_targetStats))
             return;
 
-        int totalDamage = damage.getValue() + strengh.getValue();
+        int totalDamage = damage.getValue() + strength.getValue();
 
         if (CanCrit())
         {
@@ -326,7 +326,7 @@ public class CharacterStats : MonoBehaviour
 
     private int CalculateCriticalDamage(int _damage)
     {
-        float totalCritPower = (critPower.getValue() + strengh.getValue()) * 0.1f;
+        float totalCritPower = (critPower.getValue() + strength.getValue()) * 0.1f;
         float critDamage = _damage + totalCritPower;
         return Mathf.RoundToInt(critDamage);
     }
