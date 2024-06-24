@@ -16,6 +16,8 @@ public class ItemData_Equipment : ItemData
 {
     public EquipmentType equipmentType;
 
+    public ItemEffect[] itemEffects;
+
     [Header("Major Stat")]
     public int strength; // increase damage and % crit power
     public int vitality; //increase health
@@ -37,6 +39,17 @@ public class ItemData_Equipment : ItemData
     public int iceDamage;
     public int fireDamage;
     public int lightningDamage;
+
+    [Header("Craft requirements")]
+    public List<InventoryItem> craftMaterials;
+
+    public void ExecuteItemEffect()
+    {
+        foreach(var item in itemEffects)
+        {
+            item.ExecuteEffect();
+        }
+    }
 
     public void AddModifiers()
     {

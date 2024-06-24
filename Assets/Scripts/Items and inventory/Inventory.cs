@@ -8,6 +8,8 @@ public class Inventory : MonoBehaviour
 {
     public static Inventory instance;
 
+    public List<ItemData> startingItems;
+
     public List<InventoryItem> inventory;
     public List<InventoryItem> stash;
     public List<InventoryItem> equipment;
@@ -47,6 +49,16 @@ public class Inventory : MonoBehaviour
         inventoryItemSlots = inventorySlotParent.GetComponentsInChildren<UI_ItemSlot>();
         stashItemSlots = stashSlotParent.GetComponentsInChildren<UI_ItemSlot>();
         equimentSlots = equipmentSlotParent.GetComponentsInChildren<UI_EquimentSlot>();
+        
+        AddStartingItem();
+    }
+
+    private void AddStartingItem()
+    {
+        for (int i = 0; i < startingItems.Count; i++)
+        {
+            AddItem(startingItems[i]);
+        }
     }
 
     public void EquipItem(ItemData _item)
@@ -182,5 +194,53 @@ public class Inventory : MonoBehaviour
                 stashValue.RemoveStack();
         }
         UpdateSlotUI();
+    }
+
+    public bool CanCraft(ItemData_Equipment _itemToCraft, List<InventoryItem> _requireMaterials)
+    {
+        List<InventoryItem> materialsToRemove = new List<InventoryItem>();
+
+        for (int i = 0; i < _requireMaterials.Count; i++)
+        {
+            if (stashDictionary.TryGetValue(_requireMaterials[i].data, out InventoryItem stashValue))
+            {
+                if(stashValue.stackSize < _requireMaterials[i].stackSize)
+                {
+                    return false;
+                } 
+                else
+                {
+                    materialsToRemove.Add(stashValue);
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        for (int i = 0; i < materialsToRemove.Count; i++)
+        {
+            RemoveItem(materialsToRemove[i].data);
+        }
+        AddItem(_itemToCraft);
+        return true;
+    }
+
+    public List<InventoryItem> GetEquipmentList() => equipment;
+
+    public List<InventoryItem> GetStastList() => stash;
+
+    public ItemData_Equipment GetEquipment(EquipmentType _type)
+    {
+        ItemData_Equipment EquipedItem = null;
+
+        foreach (KeyValuePair<ItemData_Equipment, InventoryItem> item in equipmentDictionary)
+        {
+            if (item.Key.equipmentType == _type)
+                EquipedItem = item.Key;
+        }
+
+        return EquipedItem;
     }
 }
