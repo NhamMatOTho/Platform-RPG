@@ -86,6 +86,19 @@ public class CharacterStats : MonoBehaviour
     }
 
     
+    public virtual void InscreaseStatBy(int _modifier, float _duration, Stat _statToModifier)
+    {
+        StartCoroutine(StatModCoroutine(_modifier, _duration, _statToModifier));
+    }
+
+    private IEnumerator StatModCoroutine(int _modifier, float _duration, Stat _statToModifier)
+    {
+        _statToModifier.AddModifier(_modifier);
+        yield return new WaitForSeconds(_duration);
+        _statToModifier.RemoveModifier(_modifier);
+    }
+
+
 
     public virtual void DoDamage(CharacterStats _targetStats)
     {
@@ -101,6 +114,8 @@ public class CharacterStats : MonoBehaviour
 
         totalDamage = CheckTargetArmor(_targetStats, totalDamage);
         _targetStats.TakeDamage(totalDamage);
+
+        DoMagicalDamage(_targetStats);
     }
 
     #region Magical damage and ailments
@@ -264,6 +279,17 @@ public class CharacterStats : MonoBehaviour
 
         if (currentHealth < 0 && !isDead)
             Die();
+    }
+
+    public virtual void InscreaseHealthBy(int _amount)
+    {
+        currentHealth += _amount;
+        if(currentHealth >= GetMaxHealthValue())
+            currentHealth = GetMaxHealthValue();
+        
+
+        if (onHealthChanged != null)
+            onHealthChanged();
     }
 
     protected virtual void DecreaseHealthBy(int _damage)

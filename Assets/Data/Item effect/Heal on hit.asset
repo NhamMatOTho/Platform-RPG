@@ -9,6 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 04d52d14af4a80341aebadd295ba1d26, type: 3}
-  m_Name: Thunder strike
+  m_Script: {fileID: 11500000, guid: fbe2db400a98f9242afe155503a972c1, type: 3}
+  m_Name: Heal on hit
   m_EditorClassIdentifier: 
+  healPercent: 0.1

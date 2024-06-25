@@ -15,17 +15,24 @@ public class PlayerAnimationTriggers : MonoBehaviour
     {
         Collider2D[] colliders = Physics2D.OverlapCircleAll(player.attackCheck.position, player.attackCheckRadius);
 
-        foreach(var hit in colliders)
+        foreach (var hit in colliders)
         {
-            if(hit.GetComponent<Enemy>() != null)
+            if (hit.GetComponent<Enemy>() != null)
             {
                 EnemyStats target = hit.GetComponent<EnemyStats>();
-                player.stats.DoDamage(target);
 
-                Inventory.instance.GetEquipment(EquipmentType.Weapon).ExecuteItemEffect();
+                if(target != null)
+                    player.stats.DoDamage(target);
+
+                ItemData_Equipment weaponData = Inventory.instance.GetEquipment(EquipmentType.Weapon);
+                if (weaponData != null)
+                {
+                    weaponData.Effect(target.transform);
+                }
             }
         }
     }
+
 
     private void ThrowSword()
     {
