@@ -5,18 +5,35 @@ using UnityEngine;
 public class UI : MonoBehaviour
 {
     [SerializeField] private GameObject characterUI;
+    [SerializeField] private GameObject skillTreeUI;
+    [SerializeField] private GameObject craftUI;
+    [SerializeField] private GameObject optionUI;
 
     public UI_ItemTooltip itemTooltip;
+    public UI_StatTooltip statTooltip;
 
     void Start()
     {
-        //itemTooltip = GetComponentInChildren<UI_ItemTooltip>();
+        SwitchTo(null);
+
+        itemTooltip.gameObject.SetActive(false);
+        statTooltip.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.C))
+            SwitchWithKey(characterUI);
+
+        if (Input.GetKeyDown(KeyCode.B))
+            SwitchWithKey(craftUI);
+
+        if (Input.GetKeyDown(KeyCode.K))
+            SwitchWithKey(skillTreeUI);
+
+        if (Input.GetKeyDown(KeyCode.O))
+            SwitchWithKey(optionUI);
     }
 
     public void SwitchTo(GameObject _menu)
@@ -28,5 +45,16 @@ public class UI : MonoBehaviour
 
         if (_menu != null)
             _menu.SetActive(true);
+    }
+
+    public void SwitchWithKey(GameObject _menu)
+    {
+        if(_menu != null && _menu.activeSelf)
+        {
+            _menu.SetActive(false);
+            return;
+        }
+
+        SwitchTo(_menu);
     }
 }
