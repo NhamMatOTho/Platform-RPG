@@ -8,6 +8,7 @@ public class UI_SkillTreeSlot : MonoBehaviour, IPointerEnterHandler, IPointerExi
 {
     private UI ui;
 
+    [SerializeField] private int skillPrice;
     [SerializeField] private string skillName;
     [TextArea]
     [SerializeField] private string skillDescription;
@@ -20,13 +21,16 @@ public class UI_SkillTreeSlot : MonoBehaviour, IPointerEnterHandler, IPointerExi
 
     private Image skillImage;
 
+    private void Awake()
+    {
+        GetComponent<Button>().onClick.AddListener(() => UnlockSkillSlot());
+    }
+
     private void Start()
     {
         ui = GetComponentInParent<UI>();
         skillImage = GetComponent<Image>();
-        skillImage.color = lockedSkillColor;
-
-        GetComponent<Button>().onClick.AddListener(() => UnlockSkillSlot()); 
+        skillImage.color = lockedSkillColor;  
     }
 
     private void OnValidate()
@@ -36,6 +40,10 @@ public class UI_SkillTreeSlot : MonoBehaviour, IPointerEnterHandler, IPointerExi
 
     public void UnlockSkillSlot()
     {
+        if (!PlayerManager.instance.HaveEnoughMoney(skillPrice))
+            return;
+        
+
         for (int i = 0; i < shouldBeUnlocked.Length; i++)
         {
             if (!shouldBeUnlocked[i].unlocked)
@@ -60,26 +68,28 @@ public class UI_SkillTreeSlot : MonoBehaviour, IPointerEnterHandler, IPointerExi
     {
         ui.skillTooltip.HideTooltip();
 
-        Vector2 mousePosition = Input.mousePosition;
-
-        float xOffset = 0;
-        float yOffset = 0;
-
-        if (mousePosition.x > 600)
-            xOffset = -150;
-        else
-            xOffset = 150;
-
-        if (mousePosition.y > 320)
-            yOffset = -150;
-        else
-            yOffset = 150;
-
-        ui.skillTooltip.transform.position = new Vector2(mousePosition.x + xOffset, mousePosition.y + yOffset);
+        
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        //Vector2 mousePosition = Input.mousePosition;
+
+        //float xOffset = 0;
+        //float yOffset = 0;
+
+        //if (mousePosition.x > 600)
+        //    xOffset = -150;
+        //else
+        //    xOffset = 150;
+
+        //if (mousePosition.y > 320)
+        //    yOffset = -75;
+        //else
+        //    yOffset = 75;
+
+        //ui.skillTooltip.transform.position = new Vector2(mousePosition.x + xOffset, mousePosition.y + yOffset);
+
         ui.skillTooltip.ShowTooltip(skillDescription, skillName);
     }
 }
