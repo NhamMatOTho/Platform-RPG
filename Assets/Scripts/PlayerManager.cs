@@ -17,6 +17,7 @@ public class PlayerManager : MonoBehaviour
             instance = this;
     }
 
+
     public bool HaveEnoughMoney(int _price)
     {
         if (_price > currency)
