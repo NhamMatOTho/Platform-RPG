@@ -7749,6 +7749,51 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &536923250
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 536923252}
+  - component: {fileID: 536923251}
+  m_Layer: 0
+  m_Name: SaveManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &536923251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 536923250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8c45de31695cdb469a44c58df3aa5a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fileName: data.anhbi
+--- !u!4 &536923252
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 536923250}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 589.50464, y: 558.503, z: 0.9950267}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &555062551
 GameObject:
   m_ObjectHideFlags: 0
@@ -29457,6 +29502,7 @@ MonoBehaviour:
   stashSlotParent: {fileID: 791632083}
   equipmentSlotParent: {fileID: 461485353}
   statSlotParent: {fileID: 1913002469}
+  loadedItems: []
 --- !u!4 &1917459995
 Transform:
   m_ObjectHideFlags: 0
@@ -32936,6 +32982,7 @@ SceneRoots:
   - {fileID: 698139736}
   - {fileID: 713523719}
   - {fileID: 1288164962}
+  - {fileID: 536923252}
   - {fileID: 654149797}
   - {fileID: 1917459995}
   - {fileID: 2112705376}
