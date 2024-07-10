@@ -8,10 +8,19 @@ public class SaveManager : MonoBehaviour
     public static SaveManager instance;
 
     [SerializeField] private string fileName;
+    [SerializeField] private bool encryptData;
 
     private GameData gameData;
     private List<ISaveManager> saveManagers;
     private FileDataHandler dataHandler;
+
+
+    [ContextMenu("Delete save file")]
+    private void DeleteSaveData()
+    {
+        dataHandler = new FileDataHandler(Application.persistentDataPath, fileName, encryptData);
+        dataHandler.Delete();
+    }
 
     private void Awake()
     {
@@ -23,7 +32,7 @@ public class SaveManager : MonoBehaviour
 
     private void Start()
     {
-        dataHandler = new FileDataHandler(Application.persistentDataPath, fileName);
+        dataHandler = new FileDataHandler(Application.persistentDataPath, fileName, encryptData);
         saveManagers = FindAllSaveManager();
         LoadGame();
     }
