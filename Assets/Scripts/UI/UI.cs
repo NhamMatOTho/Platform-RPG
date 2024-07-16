@@ -10,6 +10,12 @@ public class UI : MonoBehaviour
     [SerializeField] private GameObject optionUI;
     [SerializeField] private GameObject ingameUI;
 
+    [Header("End screen")]
+    [SerializeField] private UI_FadeScreen fadeScreen;
+    [SerializeField] private GameObject endText;
+    [SerializeField] private GameObject restartButton;
+
+
     public UI_ItemTooltip itemTooltip;
     public UI_StatTooltip statTooltip;
     public UI_SkillTooltip skillTooltip;
@@ -46,9 +52,12 @@ public class UI : MonoBehaviour
 
     public void SwitchTo(GameObject _menu)
     {
+
         for (int i = 0; i < transform.childCount; i++)
         {
-            transform.GetChild(i).gameObject.SetActive(false);
+            bool fadeScreen = transform.GetChild(i).GetComponent<UI_FadeScreen>() != null;
+            if(!fadeScreen)
+                transform.GetChild(i).gameObject.SetActive(false);
         }
 
         if (_menu != null)
@@ -77,4 +86,20 @@ public class UI : MonoBehaviour
 
         SwitchTo(ingameUI);
     }
+
+    public void SwitchOnEndScreen()
+    {
+        fadeScreen.FadeOut();
+        StartCoroutine(EndScreenCoroutine());
+    }
+
+    IEnumerator EndScreenCoroutine()
+    {
+        yield return new WaitForSeconds(1);
+        endText.SetActive(true);
+        yield return new WaitForSeconds(1);
+        restartButton.SetActive(true);
+    }
+
+    public void RestartGameButton() => GameManager.instance.RestartScene();
 }
