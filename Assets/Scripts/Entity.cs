@@ -7,14 +7,14 @@ public class Entity : MonoBehaviour
     #region Components
     public Animator anim { get; private set; }
     public Rigidbody2D rb { get; private set; }
-    public EntityFX fx { get; private set; }
+
     public SpriteRenderer sr { get; private set; }
     public CharacterStats stats { get; private set; }
     public CapsuleCollider2D cd { get; private set; }
     #endregion
 
     [Header("Knockback info")]
-    [SerializeField] Vector2 knockbackDirection;
+    [SerializeField] public Vector2 knockbackPower;
     [SerializeField] float knockbackDuration;
     protected bool isKnocked;
 
@@ -27,6 +27,8 @@ public class Entity : MonoBehaviour
     [SerializeField] protected Transform wallCheck;
     [SerializeField] protected float wallCheckDistance;
     [SerializeField] protected LayerMask whatIsGround;
+
+    public int knockbackDir { get; private set; }
 
     public int facingDir { get; private set; } = 1;
     protected bool facingRight = true;
@@ -42,7 +44,7 @@ public class Entity : MonoBehaviour
     {
         anim = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        fx = GetComponent<EntityFX>();
+        
         sr = GetComponentInChildren<SpriteRenderer>();
         stats = GetComponent<CharacterStats>();
         cd = GetComponent<CapsuleCollider2D>();
@@ -72,10 +74,26 @@ public class Entity : MonoBehaviour
     protected virtual IEnumerator HitKnockback()
     {
         isKnocked = true;
-        rb.velocity = new Vector2(knockbackDirection.x * -facingDir, knockbackDirection.y);
+        rb.velocity = new Vector2(knockbackPower.x * -facingDir, knockbackPower.y);
         yield return new WaitForSeconds(knockbackDuration);
         isKnocked = false;
+        SetupZeroKnockbackPower();
     }
+
+    public virtual void SetupKnockbackDir(Transform _damageDir)
+    {
+        if (_damageDir.position.x > transform.position.x)
+            knockbackDir = -1;
+        else if (_damageDir.position.x < transform.position.x)
+            knockbackDir = 1;
+    }
+
+    protected virtual void SetupZeroKnockbackPower()
+    {
+
+    }
+
+    public void SetupKnockbackPower(Vector2 _knockbackPower) => knockbackPower = _knockbackPower;
 
     #region Velocity
     public void SetZeroVelocity()

@@ -16,7 +16,7 @@ public class PlayerItemDrop : ItemDrop
 
         foreach (InventoryItem item in inventory.GetEquipmentList())
         {
-            if(Random.RandomRange(0, 100) <= chanceToLoseItems)
+            if(Random.Range(0, 100) <= chanceToLoseItems)
             {
                 DropItem(item.data);
                 itemsToUnequip.Add(item);
@@ -31,7 +31,7 @@ public class PlayerItemDrop : ItemDrop
 
         foreach (InventoryItem item in inventory.GetStastList())
         {
-            if (Random.RandomRange(0, 100) <= chanceToLoseMaterials)
+            if (Random.Range(0, 100) <= chanceToLoseMaterials)
             {
                 DropItem(item.data);
                 materialsToLose.Add(item);

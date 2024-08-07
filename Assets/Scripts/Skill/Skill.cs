@@ -5,7 +5,7 @@ using UnityEngine;
 public class Skill : MonoBehaviour
 {
     public float cooldown;
-    protected float cooldownTimer;
+    public float cooldownTimer;
 
     protected Player player;
 
@@ -34,6 +34,7 @@ public class Skill : MonoBehaviour
             cooldownTimer = cooldown;
             return true;
         }
+        player.fx.CreatePopupText("Cooldown");
         return false;
     }
 

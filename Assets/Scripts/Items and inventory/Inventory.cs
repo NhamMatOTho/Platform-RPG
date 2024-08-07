@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -39,6 +37,7 @@ public class Inventory : MonoBehaviour, ISaveManager
     private float armorCooldown;
 
     [Header("Database")]
+    public List<ItemData> itemDataBase;
     public List<InventoryItem> loadedItems;
     public List<ItemData_Equipment> loadedEquipments;
 
@@ -65,20 +64,20 @@ public class Inventory : MonoBehaviour, ISaveManager
         stashItemSlots = stashSlotParent.GetComponentsInChildren<UI_ItemSlot>();
         equimentSlots = equipmentSlotParent.GetComponentsInChildren<UI_EquimentSlot>();
         statSlots = statSlotParent.GetComponentsInChildren<UI_StatSlot>();
-        
+
         AddStartingItem();
     }
 
     private void AddStartingItem()
     {
-        foreach(ItemData_Equipment item in loadedEquipments)
+        foreach (ItemData_Equipment item in loadedEquipments)
         {
             EquipItem(item);
         }
 
-        if(loadedItems.Count > 0)
+        if (loadedItems.Count > 0)
         {
-            foreach(InventoryItem item in loadedItems)
+            foreach (InventoryItem item in loadedItems)
             {
                 for (int i = 0; i < item.stackSize; i++)
                 {
@@ -108,7 +107,7 @@ public class Inventory : MonoBehaviour, ISaveManager
                 oldEquipment = item.Key;
         }
 
-        if(oldEquipment != null)
+        if (oldEquipment != null)
         {
             UnequipItem(oldEquipment);
             AddItem(oldEquipment);
@@ -177,11 +176,11 @@ public class Inventory : MonoBehaviour, ISaveManager
 
     public void AddItem(ItemData _item)
     {
-        if(_item.itemType == ItemType.Equipment && CanAddItem())
+        if (_item.itemType == ItemType.Equipment && CanAddItem())
             AddToInventory(_item);
-        else if(_item.itemType == ItemType.Material)
+        else if (_item.itemType == ItemType.Material)
             AddToStash(_item);
-        
+
 
         UpdateSlotUI();
     }
@@ -216,7 +215,7 @@ public class Inventory : MonoBehaviour, ISaveManager
 
     public void RemoveItem(ItemData _item)
     {
-        if(inventoryDictionary.TryGetValue(_item, out InventoryItem value))
+        if (inventoryDictionary.TryGetValue(_item, out InventoryItem value))
         {
             if (value.stackSize <= 1)
             {
@@ -242,7 +241,7 @@ public class Inventory : MonoBehaviour, ISaveManager
 
     public bool CanAddItem()
     {
-        if(inventory.Count >= inventoryItemSlots.Length)
+        if (inventory.Count >= inventoryItemSlots.Length)
         {
             return false;
         }
@@ -257,10 +256,10 @@ public class Inventory : MonoBehaviour, ISaveManager
         {
             if (stashDictionary.TryGetValue(_requireMaterials[i].data, out InventoryItem stashValue))
             {
-                if(stashValue.stackSize < _requireMaterials[i].stackSize)
+                if (stashValue.stackSize < _requireMaterials[i].stackSize)
                 {
                     return false;
-                } 
+                }
                 else
                 {
                     materialsToRemove.Add(stashValue);
@@ -316,7 +315,7 @@ public class Inventory : MonoBehaviour, ISaveManager
     public bool CanUseArmor()
     {
         ItemData_Equipment currentArmor = GetEquipment(EquipmentType.Armor);
-        if(Time.time > lastTimeUseArmor + armorCooldown)
+        if (Time.time > lastTimeUseArmor + armorCooldown)
         {
             armorCooldown = currentArmor.itemCooldown;
             lastTimeUseArmor = Time.time;
@@ -328,11 +327,11 @@ public class Inventory : MonoBehaviour, ISaveManager
 
     public void LoadData(GameData _data)
     {
-        foreach(KeyValuePair<string, int> pair in _data.inventory)
+        foreach (KeyValuePair<string, int> pair in _data.inventory)
         {
-            foreach(var item in GetItemDataBase())
+            foreach (var item in itemDataBase)
             {
-                if(item != null && item.itemID == pair.Key)
+                if (item != null && item.itemID == pair.Key)
                 {
                     InventoryItem itemToLoad = new InventoryItem(item);
                     itemToLoad.stackSize = pair.Value;
@@ -341,11 +340,11 @@ public class Inventory : MonoBehaviour, ISaveManager
             }
         }
 
-        foreach(string loadedItemID in _data.equipmentID)
+        foreach (string loadedItemID in _data.equipmentID)
         {
-            foreach(var item in GetItemDataBase())
+            foreach (var item in itemDataBase)
             {
-                if(item != null && loadedItemID == item.itemID)
+                if (item != null && loadedItemID == item.itemID)
                 {
                     loadedEquipments.Add(item as ItemData_Equipment);
                 }
@@ -363,23 +362,27 @@ public class Inventory : MonoBehaviour, ISaveManager
             _data.inventory.Add(pair.Key.itemID, pair.Value.stackSize);
         }
 
-        foreach(KeyValuePair<ItemData, InventoryItem> pair in stashDictionary)
+        foreach (KeyValuePair<ItemData, InventoryItem> pair in stashDictionary)
         {
             _data.inventory.Add(pair.Key.itemID, pair.Value.stackSize);
         }
 
-        foreach(KeyValuePair<ItemData_Equipment, InventoryItem> pair in equipmentDictionary)
+        foreach (KeyValuePair<ItemData_Equipment, InventoryItem> pair in equipmentDictionary)
         {
             _data.equipmentID.Add(pair.Key.itemID);
         }
     }
+
+#if UNITY_EDITOR
+    [ContextMenu("Fill up item database")]
+    private void FillUpItemDataBase() => itemDataBase = new List<ItemData>(GetItemDataBase());
 
     private List<ItemData> GetItemDataBase()
     {
         List<ItemData> itemDataBase = new List<ItemData>();
         string[] assetNames = AssetDatabase.FindAssets("", new[] { "Assets/Data/Items" });
 
-        foreach(string SOName in assetNames)
+        foreach (string SOName in assetNames)
         {
             var SOPath = AssetDatabase.GUIDToAssetPath(SOName);
             var itemData = AssetDatabase.LoadAssetAtPath<ItemData>(SOPath);
@@ -388,4 +391,5 @@ public class Inventory : MonoBehaviour, ISaveManager
 
         return itemDataBase;
     }
+#endif
 }

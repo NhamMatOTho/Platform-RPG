@@ -24,12 +24,27 @@ public class PlayerStats : CharacterStats
 
         player.Die();
 
+        GameManager.instance.lostCurrencyAmount = PlayerManager.instance.currency;
+        PlayerManager.instance.currency = 0;
+
         player.GetComponent<PlayerItemDrop>()?.GenerateDrop();
     }
 
     protected override void DecreaseHealthBy(int _damage)
     {
         base.DecreaseHealthBy(_damage);
+
+        if (isDead)
+            return;
+
+        if(_damage > GetMaxHealthValue() * 0.3f)
+        {
+            player.SetupKnockbackPower(new Vector2(10, 6));
+            player.fx.ScreenShake(player.fx.shakeHighDamage);
+
+            int randomSound = Random.RandomRange(34, 35);
+            AudioManager.instance.PlaySFX(randomSound, null);
+        }
 
         ItemData_Equipment currentArmor = Inventory.instance.GetEquipment(EquipmentType.Armor);
         if(currentArmor != null)

@@ -71,6 +71,8 @@ public class CharacterStats : MonoBehaviour
 
     public bool isDead { get; private set; }
     private bool isVulnerable;
+    public bool isInvincible { get; private set; }
+
 
     protected virtual void Start()
     {
@@ -135,15 +137,22 @@ public class CharacterStats : MonoBehaviour
 
     public virtual void DoDamage(CharacterStats _targetStats)
     {
+        bool critStrike = false;
+
         if (TargetCanAvoidAttack(_targetStats))
             return;
+
+        _targetStats.GetComponent<Entity>().SetupKnockbackDir(transform);
 
         int totalDamage = damage.getValue() + strength.getValue();
 
         if (CanCrit())
         {
             totalDamage = CalculateCriticalDamage(totalDamage);
+            critStrike = true;
         }
+
+        fx.CreatHitFx(_targetStats.transform, critStrike);
 
         totalDamage = CheckTargetArmor(_targetStats, totalDamage);
         _targetStats.TakeDamage(totalDamage);
@@ -305,6 +314,9 @@ public class CharacterStats : MonoBehaviour
 
     public virtual void TakeDamage(int _damage)
     {
+        if (isInvincible)
+            return;
+
         DecreaseHealthBy(_damage);
 
         GetComponent<Entity>().DamageImpact();
@@ -332,6 +344,9 @@ public class CharacterStats : MonoBehaviour
 
         currentHealth -= _damage;
 
+        if (_damage > 0)
+            fx.CreatePopupText(_damage.ToString());
+
         if(onHealthChanged != null)
         {
             onHealthChanged();
@@ -342,6 +357,14 @@ public class CharacterStats : MonoBehaviour
     {
         isDead = true;
     }
+
+    public void KillEntity()
+    {
+        if (!isDead)
+            Die();
+    }
+
+    public void MakeInvincible(bool _invincible) => isInvincible = _invincible;
 
     #region Stat calculations;
     protected bool TargetCanAvoidAttack(CharacterStats _targetStats)
