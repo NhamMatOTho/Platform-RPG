@@ -15,6 +15,7 @@ public class Entity : MonoBehaviour
 
     [Header("Knockback info")]
     [SerializeField] public Vector2 knockbackPower;
+    [SerializeField] public Vector2 knockbackOffset;
     [SerializeField] float knockbackDuration;
     protected bool isKnocked;
 
@@ -74,7 +75,11 @@ public class Entity : MonoBehaviour
     protected virtual IEnumerator HitKnockback()
     {
         isKnocked = true;
-        rb.velocity = new Vector2(knockbackPower.x * -facingDir, knockbackPower.y);
+
+        float xOffset = Random.Range(knockbackOffset.x, knockbackOffset.y);
+
+        if(knockbackPower.x > 0 || knockbackPower.y > 0) //make player stop when being knocked back
+            rb.velocity = new Vector2((knockbackPower.x + xOffset)* facingDir, knockbackPower.y);
         yield return new WaitForSeconds(knockbackDuration);
         isKnocked = false;
         SetupZeroKnockbackPower();
@@ -120,7 +125,7 @@ public class Entity : MonoBehaviour
     protected virtual void OnDrawGizmos()
     {
         Gizmos.DrawLine(groundCheck.position, new Vector3(groundCheck.position.x, groundCheck.position.y - groundCheckDistance));
-        Gizmos.DrawLine(wallCheck.position, new Vector3(wallCheck.position.x + wallCheckDistance, wallCheck.position.y));
+        Gizmos.DrawLine(wallCheck.position, new Vector3(wallCheck.position.x + wallCheckDistance * facingDir, wallCheck.position.y));
         Gizmos.DrawWireSphere(attackCheck.position, attackCheckRadius);
     }
     #endregion
@@ -140,6 +145,15 @@ public class Entity : MonoBehaviour
     {
         if (_x > 0 && !facingRight) Flip();
         else if (_x < 0 && facingRight) Flip();
+    }
+
+    public virtual void SetupDefaultFacingDir(int _direction)
+    {
+        facingDir = _direction;
+        if(facingDir == -1)
+        {
+            facingRight = false;
+        }
     }
     #endregion
 
